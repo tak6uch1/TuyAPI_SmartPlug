@@ -19,7 +19,7 @@ on exeAPI(message)
 	if AWAKE then
 		try
 			-- say "Start API"
-			do shell script "/usr/local/bin/node /Users/user/work/PowerManager/plug_" & message & ".js > /Users/user/plug.log 2>&1"
+			do shell script "/usr/local/bin/node /Users/user/work/TuyAPI_SmartPlug/plug_" & message & ".js > /Users/user/plug.log 2>&1"
 			-- say "Normal end"
 		on error
 			-- say "Error occurred"
@@ -31,7 +31,6 @@ on exeAPI(message)
 end exeAPI
 
 on idle
-	do shell script "/Users/user/bin/battery_info.sh >> /Users/user/battery/battery_log.csv"
 	set per to (do shell script "pmset -g batt | grep % | sed 's/[%;]/ /' | awk '{print $3}'") as number
 	set ret to 1
 	set cnt to 0
