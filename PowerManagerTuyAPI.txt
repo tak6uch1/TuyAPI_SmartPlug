@@ -1,0 +1,67 @@
+use AppleScript version "2.4" -- Yosemite (10.10) or later
+use framework "Foundation"
+use framework "AppKit"
+use scripting additions
+
+global MIN, MAX, AWAKE
+
+set MIN to 50
+set MAX to 55
+
+set AWAKE to true
+
+set aCenter to current application's NSWorkspace's sharedWorkspace()'s notificationCenter()
+aCenter's addObserver:me selector:"notifSleep:" |name|:"NSWorkspaceWillSleepNotification" object:(missing value)
+aCenter's addObserver:me selector:"notifWaked:" |name|:"NSWorkspaceDidWakeNotification" object:(missing value)
+
+on exeAPI(message)
+	-- say "The AWAKE value is " & AWAKE
+	if AWAKE then
+		try
+			-- say "Start API"
+			do shell script "/usr/local/bin/node /Users/user/work/PowerManager/plug_" & message & ".js > /Users/user/plug.log 2>&1"
+			-- say "Normal end"
+		on error
+			-- say "Error occurred"
+			-- display dialog "Error occurred"
+			return 1
+		end try
+	end if
+	return 0
+end exeAPI
+
+on idle
+	do shell script "/Users/user/bin/battery_info.sh >> /Users/user/battery/battery_log.csv"
+	set per to (do shell script "pmset -g batt | grep % | sed 's/[%;]/ /' | awk '{print $3}'") as number
+	set ret to 1
+	set cnt to 0
+	repeat while cnt < 3 and ret ≠ 0
+		-- say "The count is " & cnt
+		if per ≤ MIN then
+			set ret to my exeAPI("on")
+		else if MAX ≤ per then
+			set ret to my exeAPI("off")
+		end if
+		set cnt to cnt + 1
+	end repeat
+	return 60
+end idle
+
+on quit
+	exeAPI("off")
+	continue quit
+end quit
+
+on notifSleep:aNotif
+	exeAPI("off")
+	-- display notification "System will sleep"
+	-- say "System will sleep"
+	set AWAKE to false
+end notifSleep:
+
+on notifWaked:aNotif
+	-- display notification "System did wake"
+	-- say "System did wake"
+	set AWAKE to true
+end notifWaked:
+
