@@ -1,6 +1,6 @@
 # Control Smart Plug with Tuya API
 
-This repository explains to toggle smart plug (Smart Life product) with Tuya API.
+This repository explains how to toggle smart plug (Smart Life product) with Tuya API.
 ![Smart Plug Image](./img/Top.png)
 
 ## Installation
@@ -47,7 +47,7 @@ To check available commands for your device, execute below.
 ```
 node get_command.js
 ```
-The following result example tells us that there are 2 commands:
+The following result tells us that there are 2 commands:
 - switch (Boolean)
 - countdown_1 (Integer)
 ```
@@ -82,7 +82,7 @@ Execute compiled JavaScript by tsc.
 node plug_on.js
 node plug_off.js
 ```
-If you want to send other command, modify body/commands.
+If you want to send the other command, modify body/commands.
 ```
   const commands = await context.request({
     path: `/v1.0/iot-03/devices/${device_id}/commands`,
